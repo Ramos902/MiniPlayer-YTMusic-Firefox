@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Player</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="player-card" class="player-card">
+    <!-- BOTÃO CANTO SUPERIOR DIREITO PARA VOLTAR AO MODO NORMAL (VISÍVEL NO MODO RESUMIDO) -->
+    <button id="btn-expand-mode" class="icon-btn expand-mode-btn" title="Voltar ao modo completo">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 3 21 3 21 9"/>
+        <polyline points="9 21 3 21 3 15"/>
+        <line x1="21" y1="3" x2="14" y2="10"/>
+        <line x1="3" y1="21" x2="10" y2="14"/>
+      </svg>
+    </button>
+
+    <!-- BARRA SUPERIOR -->
+    <header class="player-header">
+      <div class="brand">
+        <div class="ytm-logo">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10" fill="#ef4444"/>
+            <circle cx="12" cy="12" r="6" fill="#180407"/>
+            <polygon points="10,8.5 16,12 10,15.5" fill="#ef4444"/>
+          </svg>
+        </div>
+        <span class="brand-title">Mini Player</span>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-detach" class="icon-btn" title="Destacar em mini-janela flutuante">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <rect x="11" y="7" width="8" height="8" rx="1.5" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+        <button id="btn-focus-tab" class="icon-btn" title="Ir para a guia do YouTube Music">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </button>
+        <button id="btn-compact-mode" class="icon-btn" title="Modo resumido">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 14 10 14 10 20"/>
+            <polyline points="20 10 14 10 14 4"/>
+            <line x1="14" y1="10" x2="21" y2="3"/>
+            <line x1="3" y1="21" x2="10" y2="14"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ESTADO: QUANDO NÃO HÁ MÚSICA TOCANDO OU ABA ABERTA -->
+    <div id="no-music-view" class="no-music-container" style="display: none;">
+      <div class="empty-icon">🎵</div>
+      <h3>Nenhuma faixa detectada</h3>
+      <p>Abra o YouTube Music para controlar a reprodução em tempo real.</p>
+      <button id="btn-open-ytm" class="btn-primary">Abrir YouTube Music</button>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL DO PLAYER -->
+    <main id="player-main" class="player-content">
+      <!-- BLOCO DA MÍDIA (CAPA + INFOS + LIKE/DISLIKE/SHUFFLE) -->
+      <section class="track-section">
+        <div class="artwork-wrapper">
+          <img id="track-art" src="" alt="Capa do Álbum" class="artwork-img">
+          <div id="artwork-placeholder" class="artwork-placeholder">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="#a88288">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="track-details">
+          <h2 id="track-title" class="track-title">Carregando faixa...</h2>
+          <span id="track-artist" class="track-artist">-</span>
+          <div id="track-time" class="track-time">0:00 / 0:00</div>
+
+          <!-- AÇÕES SECUNDÁRIAS (DISLIKE, LIKE, SHUFFLE, REPEAT) -->
+          <div class="track-actions-row">
+            <button id="btn-dislike" class="action-btn" title="Não gostei">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.58-6.59c.37-.36.59-.86.59-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/>
+              </svg>
+            </button>
+
+            <button id="btn-like" class="action-btn like-pill" title="Gostei">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+              </svg>
+            </button>
+
+            <button id="btn-shuffle" class="action-btn" title="Ordem aleatória">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+              </svg>
+            </button>
+
+            <button id="btn-repeat" class="action-btn" title="Repetir faixa">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+              </svg>
+              <span id="repeat-badge" class="repeat-badge" style="display: none;">1</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- BARRA DE PROGRESSO / SCRUBBER -->
+      <section class="progress-section">
+        <div id="progress-bar-container" class="progress-container">
+          <div id="progress-bar-fill" class="progress-fill" style="width: 0%;"></div>
+        </div>
+      </section>
+
+      <!-- CONTROLES PRINCIPAIS DE REPRODUÇÃO -->
+      <section class="main-controls">
+        <button id="btn-prev" class="ctrl-btn" title="Faixa anterior">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+          </svg>
+        </button>
+
+        <button id="btn-rewind" class="ctrl-btn" title="Voltar 10 segundos">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+            <text x="12" y="14.8" font-size="7.5" font-weight="800" text-anchor="middle" font-family="system-ui, sans-serif" fill="currentColor">10</text>
+          </svg>
+        </button>
+
+        <button id="btn-play-pause" class="play-btn-circle" title="Reproduzir / Pausar">
+          <svg id="icon-play" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <polygon points="8,5 19,12 8,19"/>
+          </svg>
+          <svg id="icon-pause" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" style="display: none;">
+            <rect x="6" y="5" width="4" height="14" rx="1"/>
+            <rect x="14" y="5" width="4" height="14" rx="1"/>
+          </svg>
+        </button>
+
+        <button id="btn-forward" class="ctrl-btn" title="Avançar 10 segundos">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/>
+            <text x="12" y="14.8" font-size="7.5" font-weight="800" text-anchor="middle" font-family="system-ui, sans-serif" fill="currentColor">10</text>
+          </svg>
+        </button>
+
+        <button id="btn-next" class="ctrl-btn" title="Próxima faixa">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+          </svg>
+        </button>
+      </section>
+
+      <!-- BARRA DE AJUSTES: VOLUME, VELOCIDADE E SLEEP TIMER -->
+      <section class="adjustments-row">
+        <!-- VOLUME -->
+        <div class="volume-container">
+          <button id="btn-mute" class="vol-btn" title="Silenciar">
+            <svg id="icon-vol-high" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+            <svg id="icon-vol-muted" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display: none;">
+              <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+            </svg>
+          </button>
+          <div id="volume-slider-container" class="vol-slider-container">
+            <div id="volume-slider-fill" class="vol-slider-fill" style="width: 100%;"></div>
+            <div id="volume-handle" class="vol-handle" style="left: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- VELOCIDADE -->
+        <div class="custom-dropdown">
+          <select id="select-speed" title="Velocidade de reprodução">
+            <option value="0.5">0.5x</option>
+            <option value="0.75">0.75x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2x</option>
+          </select>
+        </div>
+
+        <!-- SLEEP TIMER -->
+        <div class="custom-dropdown sleep-dropdown">
+          <span class="sleep-icon">⏱</span>
+          <select id="select-sleep-timer" title="Temporizador de desligamento">
+            <option value="0" selected>None</option>
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60">1 hora</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- ACORDEÃO DE LETRA (LYRICS) -->
+      <section class="lyrics-accordion">
+        <button id="btn-toggle-lyrics" class="lyrics-header">
+          <span>Lyrics</span>
+          <span id="lyrics-arrow" class="arrow-icon">▼</span>
+        </button>
+        <div id="lyrics-drawer" class="lyrics-drawer" style="display: none;">
+          <div id="lyrics-content" class="lyrics-body">Carregando letra...</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+
