@@ -75,7 +75,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       url: browser.runtime.getURL("popup/popup.html?detached=true"),
       type: "popup",
       width: 395,
-      height: 520
+      height: 460
     });
   }
 

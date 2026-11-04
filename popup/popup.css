@@ -565,16 +565,18 @@ body {
 
 .player-card.compact-mode .expand-mode-btn {
   display: flex !important;
+  top: 12px;
+  right: 10px;
 }
 
-.player-card.compact-mode #player-main {
+.player-card.compact-mode #player-main:not([style*="display: none"]) {
   display: grid !important;
   grid-template-columns: 58px 1fr auto;
   grid-template-rows: auto auto;
   grid-template-areas:
     "art controls volume"
     "art progress progress";
-  column-gap: 14px;
+  column-gap: 10px;
   row-gap: 10px;
   align-items: center;
 }
@@ -591,10 +593,15 @@ body {
   border: 1.5px solid rgba(255, 255, 255, 0.16);
 }
 
+.player-card.compact-mode .artwork-placeholder svg {
+  width: 26px;
+  height: 26px;
+}
+
 .player-card.compact-mode .main-controls {
   grid-area: controls;
   padding: 0;
-  gap: 12px;
+  gap: 8px;
   justify-content: center;
 }
 
@@ -631,7 +638,7 @@ body {
   grid-area: volume;
   border-top: none;
   padding-top: 0;
-  padding-right: 24px;
+  padding-right: 36px;
   gap: 0;
 }
 
@@ -640,8 +647,9 @@ body {
 }
 
 .player-card.compact-mode .vol-slider-container {
-  width: 66px;
-  max-width: 66px;
+  width: 54px;
+  max-width: 54px;
+  margin-right: 6px;
 }
 
 .player-card.compact-mode .progress-section {

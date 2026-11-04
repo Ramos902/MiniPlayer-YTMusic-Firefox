@@ -1,19 +1,26 @@
 {
   "manifest_version": 2,
-  "name": "Mini Player - YouTube Music",
+  "name": "Mini Player para YouTube Music",
   "version": "2.0.0",
-  "description": "Mini Player responsivo e elegante para controlar o YouTube Music em qualquer aba.",
+  "description": "Mini Player responsivo e elegante para controlar o YouTube Music e o YouTube em qualquer aba.",
+  "author": "Ramos902",
+  "homepage_url": "https://github.com/Ramos902/MiniPlayer-YTMusic-Firefox",
   "browser_specific_settings": {
     "gecko": {
-      "id": "minimal-tab-miniplayer@local.extension",
-      "strict_min_version": "109.0"
+      "id": "miniplayer-ytmusic@ramos902.github.io",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
     }
   },
   "permissions": [
     "tabs",
-    "activeTab",
-    "storage",
-    "<all_urls>"
+    "*://music.youtube.com/*",
+    "*://www.youtube.com/*"
   ],
   "background": {
     "scripts": ["background.js"],
@@ -32,14 +39,16 @@
   "browser_action": {
     "default_icon": {
       "48": "icons/icon-48.png",
-      "96": "icons/icon-96.png"
+      "96": "icons/icon-96.png",
+      "128": "icons/icon-128.png"
     },
     "default_title": "Mini Player",
     "default_popup": "popup/popup.html"
   },
   "icons": {
     "48": "icons/icon-48.png",
-    "96": "icons/icon-96.png"
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
   }
 }
 

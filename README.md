@@ -22,8 +22,12 @@ Extensão para Firefox que adiciona um mini player para controlar o YouTube Musi
 ## Estrutura
 
 ```text
-Mini Player - YTMusic/
+MiniPlayer-YTMusic-Firefox/
 ├── icons/
+│   ├── icon-48.png
+│   ├── icon-96.png
+│   ├── icon-128.png
+│   └── icon.svg
 ├── popup/
 │   ├── popup.html
 │   ├── popup.css
@@ -31,7 +35,8 @@ Mini Player - YTMusic/
 ├── screenshots/
 ├── background.js
 ├── ytm-controller.js
-└── manifest.json
+├── manifest.json
+└── LICENSE
 ```
 
 ## Instalação (Desenvolvimento)
@@ -39,3 +44,16 @@ Mini Player - YTMusic/
 1. No Firefox, acesse `about:debugging`.
 2. Clique em **Este Firefox** (*This Firefox*).
 3. Clique em **Carregar extensão temporária...** e selecione o arquivo `manifest.json`.
+
+## Empacotamento para Publicação (Firefox Add-ons / AMO)
+
+Para gerar o pacote `.zip` limpo pronto para submissão na loja oficial do Firefox:
+
+```bash
+zip -r -FS miniplayer-ytmusic-firefox.zip \
+  manifest.json background.js ytm-controller.js popup/ icons/ LICENSE
+```
+
+## Licença
+
+Distribuído sob a licença [MIT](./LICENSE).

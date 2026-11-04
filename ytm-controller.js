@@ -39,13 +39,7 @@
       target.click();
       return true;
     } catch {
-      try {
-        const raw = target.wrappedJSObject || target;
-        raw.click();
-        return true;
-      } catch {
-        return false;
-      }
+      return false;
     }
   }
 
@@ -100,9 +94,8 @@
       const { renderer, likeBtn, dislikeBtn } = getYtmLikeDislikeElements();
       if (!renderer) return { isLiked: false, isDisliked: false };
 
-      // 1. Verifica a propriedade/atributo oficial like-status do ytmusic-like-button-renderer da player-bar
-      const rawRenderer = renderer.wrappedJSObject || renderer;
-      const status = rawRenderer.likeStatus || renderer.getAttribute("like-status");
+      // 1. Verifica o atributo oficial like-status do ytmusic-like-button-renderer da player-bar
+      const status = renderer.getAttribute("like-status");
       if (status === "LIKE") return { isLiked: true, isDisliked: false };
       if (status === "DISLIKE") return { isLiked: false, isDisliked: true };
       if (status === "INDIFFERENT") {
@@ -235,9 +228,7 @@
       }
 
       // Repeat no YTM usa o atributo repeat-mode="NONE" | "ALL" | "ONE" na ytmusic-player-bar
-      const rawBar = playerBar.wrappedJSObject || playerBar;
       const repeatAttr = (
-        rawBar.repeatMode ||
         playerBar.getAttribute("repeat-mode") ||
         "NONE"
       ).toUpperCase();
@@ -248,8 +239,7 @@
       // Shuffle no YTM: verifica atributo shuffle-on ou estado sincronizado
       const hasShuffleAttr =
         playerBar.hasAttribute("shuffle-on") ||
-        playerBar.getAttribute("shuffle-on") === "true" ||
-        Boolean(rawBar.shuffleOn);
+        playerBar.getAttribute("shuffle-on") === "true";
 
       const isShuffle = hasShuffleAttr || isQueueShuffled;
 
@@ -322,8 +312,16 @@
 
       const imgEl =
         playerBar.querySelector(".image") || playerBar.querySelector("img");
-      if (imgEl && imgEl.src && !imgEl.src.startsWith("data:image/gif")) {
-        artwork = upgradeArtworkUrl(imgEl.src);
+      const rawSrc = imgEl ? imgEl.getAttribute("src") : "";
+      if (
+        rawSrc &&
+        rawSrc.trim() !== "" &&
+        !rawSrc.startsWith("data:image/gif") &&
+        (rawSrc.startsWith("http://") ||
+          rawSrc.startsWith("https://") ||
+          rawSrc.startsWith("data:image/"))
+      ) {
+        artwork = upgradeArtworkUrl(rawSrc);
       }
     } else {
       const titleEl =
@@ -343,7 +341,23 @@
       if (!title && meta.title) title = meta.title;
       if (!artist && meta.artist) artist = meta.artist;
       if (!artwork && meta.artwork && meta.artwork.length > 0) {
-        artwork = upgradeArtworkUrl(meta.artwork[meta.artwork.length - 1].src);
+        const candidateSrc = meta.artwork[meta.artwork.length - 1].src;
+        if (
+          candidateSrc &&
+          candidateSrc !== window.location.href &&
+          !candidateSrc.startsWith("data:image/gif")
+        ) {
+          artwork = upgradeArtworkUrl(candidateSrc);
+        }
+      }
+    }
+
+    // Fallback de miniatura via parâmetro ?v= do vídeo quando disponível
+    if (!artwork) {
+      const params = new URLSearchParams(window.location.search);
+      const videoId = params.get("v");
+      if (videoId) {
+        artwork = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
       }
     }
 
@@ -528,8 +542,7 @@
             );
             if (slider) {
               try {
-                const rawSlider = slider.wrappedJSObject || slider;
-                rawSlider.value = Math.round(vol * 100);
+                slider.setAttribute("value", String(Math.round(vol * 100)));
               } catch {}
             }
           }

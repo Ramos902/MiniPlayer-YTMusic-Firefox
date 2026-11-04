@@ -11,6 +11,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const trackArt = document.getElementById("track-art");
   const artworkPlaceholder = document.getElementById("artwork-placeholder");
+
+  // Garante que se a imagem da capa falhar ao carregar, exibe apenas o ícone musical
+  trackArt.addEventListener("load", () => {
+    trackArt.style.display = "block";
+    artworkPlaceholder.style.display = "none";
+  });
+
+  trackArt.addEventListener("error", () => {
+    trackArt.style.display = "none";
+    artworkPlaceholder.style.display = "flex";
+  });
   const trackTitle = document.getElementById("track-title");
   const trackArtist = document.getElementById("track-artist");
   const trackTime = document.getElementById("track-time");
@@ -163,12 +174,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Capa do álbum
     if (state.artwork) {
-      if (trackArt.src !== state.artwork) {
+      if (trackArt.getAttribute("src") !== state.artwork) {
+        trackArt.style.display = "none";
+        artworkPlaceholder.style.display = "flex";
         trackArt.src = state.artwork;
+      } else if (trackArt.complete && trackArt.naturalWidth > 0) {
+        trackArt.style.display = "block";
+        artworkPlaceholder.style.display = "none";
       }
-      trackArt.style.display = "block";
-      artworkPlaceholder.style.display = "none";
     } else {
+      trackArt.removeAttribute("src");
       trackArt.style.display = "none";
       artworkPlaceholder.style.display = "flex";
     }
