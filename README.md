@@ -2,6 +2,8 @@
 
 Extensão para Firefox que adiciona um mini player para controlar o YouTube Music e o YouTube a partir de qualquer guia.
 
+[![Disponível no Firefox Add-ons](https://img.shields.io/badge/Firefox_Add--ons-Instalar-FF7139?style=flat-square&logo=firefox-browser&logoColor=white)](https://addons.mozilla.org/pt-BR/firefox/addon/mini-player-para-youtube-music/)
+
 ## Interface
 
 ### Modo completo
@@ -39,7 +41,14 @@ MiniPlayer-YTMusic-Firefox/
 └── LICENSE
 ```
 
-## Instalação (Desenvolvimento)
+## Instalação
+
+### Loja Oficial (Firefox Add-ons)
+
+Você pode instalar diretamente pela página oficial de complementos do Firefox:
+- **[Mini Player para YouTube Music no Firefox Add-ons](https://addons.mozilla.org/pt-BR/firefox/addon/mini-player-para-youtube-music/)**
+
+### Desenvolvimento Local
 
 1. No Firefox, acesse `about:debugging`.
 2. Clique em **Este Firefox** (*This Firefox*).
